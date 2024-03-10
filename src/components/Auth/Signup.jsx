@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import useAPI from "../hook/useAPI";
 
 export default function Signup() {
-    const [inputs, setInputs] = useState([
+    const navigate = useNavigate();
+    const { error, setError, isComplete, post } = useAPI();
+    const inputs = [
         {
             id: 1,
             name: "username",
             type: "text",
             label: "Your username : ",
             for: "signup-text",
-            isError: false,
-            messageError: "",
         },
         {
             id: 2,
@@ -17,8 +19,6 @@ export default function Signup() {
             type: "email",
             label: "Your email : ",
             for: "signup-email",
-            isError: false,
-            messageError: "",
         },
         {
             id: 3,
@@ -26,8 +26,6 @@ export default function Signup() {
             type: "password",
             label: "Your password : ",
             for: "signup-password",
-            isError: false,
-            messageError: "",
         },
         {
             id: 4,
@@ -35,10 +33,8 @@ export default function Signup() {
             type: "password",
             label: "confirm password : ",
             for: "signup-confirm_password",
-            isError: false,
-            messageError: "",
         },
-    ]);
+    ];
 
     const [userInfos, setUserInfos] = useState({
         username: "",
@@ -48,19 +44,24 @@ export default function Signup() {
     });
 
     const handleChange = (e) => {
-        setUserInfos({
-            ...userInfos,
-            [e.target.name]: e.target.value,
-        });
+        setError(null);
+        const { name, value } = e.target;
 
-        console.log(userInfos);
+        setUserInfos((prevState) => ({
+            ...prevState,
+            [name]: value.trim(),
+        }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log(e);
+        await post("signup", userInfos);
     };
+
+    useEffect(() => {
+        if (isComplete) navigate("/signin");
+    }, [isComplete, navigate]);
 
     return (
         <section className="bg-blue-50 min-h-full">
@@ -77,6 +78,7 @@ export default function Signup() {
                         />
                     </div>
                 ))}
+                {error && <div className="text-red-600">{error}</div>}
                 <button
                     type="submit"
                     className="bg-blue-600 text-slate-100 px-4 pb-1 rounded"
