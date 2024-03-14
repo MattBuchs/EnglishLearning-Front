@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import APIHandling from "./features/APIHandling";
+import user from "./features/user";
 
 export const store = configureStore({
     reducer: {
-        APIHandling,
+        user,
     },
 });

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { NavLink } from "react-router-dom";
 
-export default function Nav({ isAuthenticated, setIsAuthenticated }) {
-    const navigate = useNavigate();
-    const [isDisconnected, setIsDisconnected] = useState(false);
+export default function Nav() {
+    const { isAuthenticated } = useSelector((state) => state.user);
+
     const menu = isAuthenticated
         ? [
               {
@@ -13,13 +13,13 @@ export default function Nav({ isAuthenticated, setIsAuthenticated }) {
               },
               {
                   id: 2,
-                  path: "/profile",
-                  name: "Profile",
+                  path: "/card",
+                  name: "Card",
               },
               {
                   id: 3,
-                  path: "/signout",
-                  name: "Sign out",
+                  path: "/my-profile",
+                  name: "Profile",
               },
           ]
         : [
@@ -40,19 +40,6 @@ export default function Nav({ isAuthenticated, setIsAuthenticated }) {
               },
           ];
 
-    const logout = () => {
-        localStorage.removeItem("user");
-        setIsAuthenticated(null);
-        setIsDisconnected(true);
-    };
-
-    useEffect(() => {
-        if (isDisconnected) {
-            setIsDisconnected(false);
-            navigate("/");
-        }
-    }, [navigate, isDisconnected]);
-
     return (
         <header className="flex justify-between items-center px-6 text-lg h-16 bg-slate-400 border-b border-slate-500 shadow">
             <h1 className="text-xl font-semibold">EnglishLearning</h1>
@@ -63,9 +50,6 @@ export default function Nav({ isAuthenticated, setIsAuthenticated }) {
                         <li key={obj.id} className="mr-1 last-of-type:mr-0">
                             <NavLink
                                 to={obj.path}
-                                onClick={() =>
-                                    obj.path === "/signout" && logout()
-                                }
                                 className={({ isActive }) =>
                                     `${
                                         isActive &&

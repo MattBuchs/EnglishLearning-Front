@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import useAPI from "../hook/useAPI";
-import { decodeToken } from "../../utils/token";
+import { getToken } from "../../features/user";
 
-export default function Signin({ setIsAuthenticated }) {
+export default function Signin() {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const { error, setError, data, isComplete, post } = useAPI();
 
@@ -47,14 +49,11 @@ export default function Signin({ setIsAuthenticated }) {
 
     useEffect(() => {
         if (isComplete) {
-            localStorage.setItem("user", data.token);
-
-            const token = localStorage.getItem("user");
-            setIsAuthenticated(decodeToken(token));
-
+            dispatch(getToken(data.token));
             navigate("/");
         }
-    }, [isComplete, data, navigate, setIsAuthenticated]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isComplete]);
 
     return (
         <section className="bg-blue-50 min-h-full">
